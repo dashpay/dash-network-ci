@@ -1,3 +1,31 @@
+dist: bionic
+
+branches:
+  only:
+    - master
+    - /^v(0|[1-9]\d*)\.(0|[1-9]\d*)-dev$/
+    - /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
+
+services:
+  - docker
+
+addons:
+  apt:
+    packages:
+      - docker-ce
+
+before_install:
+  - mkdir -p ~/.local/bin
+  - curl -fsSL -o ~/.local/bin/dash-network https://raw.github.com/dashpay/dash-network-deploy/master/bin/dash-network && chmod +x ~/.local/bin/dash-network
+  - git clone https://$NETWORK_CONFIGS_GITHUB_USERNAME:$NETWORK_CONFIGS_GITHUB_TOKEN@github.com/nmarley/dash-network-configs ~/dash-network-configs
+  - cp ~/dash-network-configs/$NETWORK_CONFIGS_PATH/.env.example ~/dash-network-configs/$NETWORK_CONFIGS_PATH/.env
+
+script:
+  - cd ~/dash-network-configs/$NETWORK_CONFIGS_PATH
+  - ~/.local/bin/dash-network test $DEVNET
+  - cd $TRAVIS_BUILD_DIR
+  - docker run dashpay/platform-test-suite $DAPI_SEED --faucet-key=$FAUCET_PRIVATE_KEY
+
 notifications:
   slack:
     secure: Byh7Xz8PyJK+p5GXJ+LR7s3brAxsgWPR+XjX813ezShn6pgk2NIumMnuRv9U4tXAy3TiXk7KMt80wTVu+kF2bi2/hvfKlLYPsfMUPueaGhB0OWf9tNpxrmzhiBi0sS5hWRl6dVD5EAWK1g6sK5x7NIRVTKf6QpxBzw4D/9PNCI2D/yWJMP4pVsx/CqlborrWinMDoA+jt8Amvq/9dGkG7Ti65qbVChMPB01lckOspDrbFFSw6JqDK4L0XohjMkdiGnaZWzc++OnRInXuaY2xDQAujfzh2aXBSogf8ZEYFBmImC+rzi1zxQgyR7i65C+3nfeoK2K22eSWtve6cvQs3ECKZtY/AcJ4beRN5Hi2B0tAHhDIOAUckuuQJXMPUBmXgrdM+ndgB+2+B9jY6hLZrHg7GQmD6wzK+C3/dy49Sm/0ABDt1PfolgmLtflvdmHWEAcd5/B0lpLSz7CzuEqkSUx9T6AtpTueCYZRMdc+2O9llIeaz+zTYSNXquThYJRFFJfba69zrKdBso/FGhBZ7gTL5nFsdJI6fqDkr8AnBc1EvV9O6rZiaOIKLTSszqaKTWqjW8VzP7WZvvCjJa8kn162mrqFcg0OYfBIDasdHUJdc+iXs73SWyz3RsnarZjtuMn83nrAjgKAUONdbPhCkfgTPiAg5AIKInjBOQetTHE=
