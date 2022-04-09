@@ -1,0 +1,56 @@
+name: Run testnet tests
+
+on:
+  schedule:
+    - cron:  '33 */3 * * *'
+  workflow_dispatch:
+
+# todo: matrix run against testnet + devnets based on networks specified in config repo
+jobs:
+  smoke-tests:
+    name: Run smoke tests
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Clone network configs
+        uses: actions/checkout@v3
+        with:
+          repository: dashevo/dash-network-configs
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Download network deploy tool wrapper
+        run: |
+          mkdir -p ~/.local/bin
+          curl -fsSL -o ~/.local/bin/dash-network https://raw.github.com/dashpay/dash-network-deploy/master/bin/dash-network
+          chmod +x ~/.local/bin/dash-network
+
+      - name: Run smoke tests
+        run: |
+          cd ~/dash-network-configs
+          ~/.local/bin/dash-network test testnet
+          
+  test-suite:
+    name: Run test suite
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Clone network configs
+        uses: actions/checkout@v3
+        with:
+          repository: dashevo/dash-network-configs
+          token: ${{ secrets.GH_PAT }}
+      
+      - name: Prepare environment
+        run: |
+          echo 'NETWORK=testnet' >> .env
+          echo 'FAUCET_PRIVATE_KEY={{ secrets.FAUCET_PRIVATE_KEY }}' > .env
+          echo 'DPNS_OWNER_PRIVATE_KEY={{ secrets.DPNS_OWNER_PRIVATE_KEY }}' >> .env
+          echo 'DASHPAY_OWNER_PRIVATE_KEY={{ secrets.DASHPAY_OWNER_PRIVATE_KEY }}' >> .env
+          echo 'FEATURE_FLAGS_OWNER_PRIVATE_KEY={{ secrets.FEATURE_FLAGS_OWNER_PRIVATE_KEY }}' >> .env
+          echo -n 'DAPI_SEED=' >> .env
+          awk -F '[= ]' '/^masternode/ {print $5}' dash-network-configs/testnet.inventory | awk NF | shuf -n1 >> .env
+
+      - name: Run platform test suite
+        run: |
+          docker run \
+          -v $(pwd)/.env:/platform/packages/platform-test-suite/.env \
+          strophy/platform-test-suite:latest \
+          yarn run test:suite
