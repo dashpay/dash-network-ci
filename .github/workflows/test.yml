@@ -41,7 +41,7 @@ jobs:
       - name: Read network variables
         uses: mikefarah/yq@v4
         with:
-          cmd: echo "DPNS_OWNER_PRIVATE_KEY=$(yq '.dpns_hd_private_key' dash-network-configs/testnet.yml)" >> .env
+          cmd: yq '.dpns_hd_private_key' dash-network-configs/testnet.yml
 
       - name: Debug .env file
         run: cat .env
