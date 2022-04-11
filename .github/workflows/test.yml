@@ -1,9 +1,9 @@
 name: Run testnet tests
 
 on:
+  workflow_dispatch:
   schedule:
     - cron:  '33 */3 * * *'
-  workflow_dispatch:
 
 # todo: matrix run against testnet + devnets based on networks specified in config repo
 jobs:
@@ -41,20 +41,10 @@ jobs:
       - name: Read network variables
         uses: mikefarah/yq@v4
         with:
-          cmd: echo 'NETWORK=testnet' >> .env
+          cmd: echo "DPNS_OWNER_PRIVATE_KEY=$(yq '.dpns_hd_private_key' dash-network-configs/testnet.yml)" >> .env
 
       - name: Debug .env file
-          run: cat .env
-
-      # - name: Prepare environment
-      #   run: |
-      #     echo 'NETWORK=testnet' >> .env
-      #     echo "FAUCET_PRIVATE_KEY=$(sed -n 's/# Private key: //p' dash-network-configs/testnet.yml)" > .env
-      #     echo 'DPNS_OWNER_PRIVATE_KEY={{ secrets.DPNS_OWNER_PRIVATE_KEY }}' >> .env
-      #     echo 'DASHPAY_OWNER_PRIVATE_KEY={{ secrets.DASHPAY_OWNER_PRIVATE_KEY }}' >> .env
-      #     echo 'FEATURE_FLAGS_OWNER_PRIVATE_KEY={{ secrets.FEATURE_FLAGS_OWNER_PRIVATE_KEY }}' >> .env
-      #     echo -n 'DAPI_SEED=' >> .env
-      #     awk -F '[= ]' '/^masternode/ {print $5}' dash-network-configs/testnet.inventory | awk NF | shuf -n1 >> .env
+        run: cat .env
 
       - name: Run platform test suite
         run: |
