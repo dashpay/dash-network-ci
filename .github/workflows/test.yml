@@ -42,7 +42,7 @@ jobs:
       - name: Read network variables
         uses: mikefarah/yq@v4
         with:
-          cmd: "yq eval .dpns_hd_private_key dash-network-configs/testnet.yml"
+          cmd: .dpns_hd_private_key dash-network-configs/testnet.yml
 
       - name: Debug .env file
         run: cat .env
