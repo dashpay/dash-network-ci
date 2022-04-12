@@ -46,7 +46,7 @@ jobs:
           chmod +x ~/.local/bin/yq
           echo "~/.local/bin" >> $GITHUB_PATH
 
-      - name: Read network variables
+      - name: Configure network variables
         run: |
           echo "NETWORK=testnet" > .env
           echo "FAUCET_PRIVATE_KEY=${{ secrets.FAUCET_PRIVATE_KEY }}" >> .env
@@ -57,16 +57,9 @@ jobs:
           echo -n "DAPI_SEED=" >> .env
           awk -F "[= ]" "/^masternode/ {print $5}" dash-network-configs/testnet.inventory | awk NF | shuf -n1 >> .env
 
-      - name: Debug .env file
-        run: cat .env
-
       - name: Run platform test suite
         run: |
           docker run \
           -v $(pwd)/.env:/platform/packages/platform-test-suite/.env \
           strophy/platform-test-suite:latest \
           yarn run test:suite
-
-      - name: Setup tmate session
-        if: ${{ failure() }}
-        uses: mxschmitt/action-tmate@v3
