@@ -26,7 +26,7 @@ jobs:
 
       - name: Run smoke tests
         run: |
-          cd ~/dash-network-configs
+          cd dash-network-configs
           ~/.local/bin/dash-network test testnet
           
   test-suite:
