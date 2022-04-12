@@ -41,7 +41,7 @@ jobs:
 
       - name: Install yq
         run: |
-          mkdir ~/.local/bin
+          mkdir -p ~/.local/bin
           wget https://github.com/mikefarah/yq/releases/download/v4.24.3/yq_linux_amd64 -O ~/.local/bin/yq
           chmod +x ~/.local/bin/yq
           echo "~/.local/bin" >> $GITHUB_PATH
