@@ -25,9 +25,8 @@ jobs:
           chmod +x ~/.local/bin/dash-network
 
       - name: Run smoke tests
-        run: |
-          cd dash-network-configs
-          ~/.local/bin/dash-network test testnet
+        run: ~/.local/bin/dash-network test testnet
+        working-directory: ./dash-network-configs
           
   test-suite:
     name: Run test suite
