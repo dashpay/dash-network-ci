@@ -16,6 +16,7 @@ jobs:
         with:
           repository: dashevo/dash-network-configs
           token: ${{ secrets.GH_PAT }}
+          path: dash-network-configs
 
       - name: Download network deploy tool wrapper
         run: |
