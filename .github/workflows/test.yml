@@ -50,9 +50,9 @@ jobs:
         run: |
           echo 'NETWORK=testnet' >> .env
           echo "FAUCET_PRIVATE_KEY=$(sed -n 's/# Private key: //p' dash-network-configs/testnet.yml)" > .env
-          echo 'DPNS_OWNER_PRIVATE_KEY=$(yq .dpns_hd_private_key dash-network-configs/testnet.yml)' >> .env
-          echo 'DASHPAY_OWNER_PRIVATE_KEY=$(.dashpay_hd_private_key dash-network-configs/testnet.yml)' >> .env
-          echo 'FEATURE_FLAGS_OWNER_PRIVATE_KEY=$(.feature_flags_hd_private_key dash-network-configs/testnet.yml)' >> .env
+          echo "DPNS_OWNER_PRIVATE_KEY=$(yq .dpns_hd_private_key dash-network-configs/testnet.yml)" >> .env
+          echo "DASHPAY_OWNER_PRIVATE_KEY=$(yq .dashpay_hd_private_key dash-network-configs/testnet.yml)" >> .env
+          echo "FEATURE_FLAGS_OWNER_PRIVATE_KEY=$(yq .feature_flags_hd_private_key dash-network-configs/testnet.yml)" >> .env
           echo -n 'DAPI_SEED=' >> .env
           awk -F '[= ]' '/^masternode/ {print $5}' dash-network-configs/testnet.inventory | awk NF | shuf -n1 >> .env
 
