@@ -2,8 +2,8 @@ name: Run testnet tests
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron:  '33 */3 * * *'
+  # schedule:
+  #   - cron:  '33 */3 * * *'
 
 # todo: matrix run against testnet + devnets based on networks specified in config repo
 jobs:
