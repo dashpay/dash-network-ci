@@ -52,7 +52,7 @@ jobs:
           echo "DASHPAY_OWNER_PRIVATE_KEY=$(yq .dashpay_hd_private_key testnet.yml)" >> .env
           echo "FEATURE_FLAGS_OWNER_PRIVATE_KEY=$(yq .feature_flags_hd_private_key testnet.yml)" >> .env
           echo -n "DAPI_SEED=" >> .env
-          awk -F "[= ]" "/^masternode/ {print $5}" testnet.inventory | awk NF | shuf -n1 >> .env
+          awk -F '[= ]' '/^masternode/ {print $5}' testnet.inventory | awk NF | shuf -n1 >> .env
 
       - name: Run platform test suite
         run: |
