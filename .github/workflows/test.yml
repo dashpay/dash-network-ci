@@ -35,7 +35,6 @@ jobs:
         with:
           repository: dashevo/dash-network-configs
           token: ${{ secrets.GH_PAT }}
-          path: dash-network-configs
 
       - name: Install yq
         run: |
@@ -49,15 +48,20 @@ jobs:
           echo "NETWORK=testnet" > .env
           echo "FAUCET_PRIVATE_KEY=${{ secrets.FAUCET_PRIVATE_KEY }}" >> .env
           echo "SKIP_SYNC_BEFORE_HEIGHT=${{ secrets.SKIP_SYNC_BEFORE_HEIGHT }}" >> .env
-          echo "DPNS_OWNER_PRIVATE_KEY=$(yq .dpns_hd_private_key dash-network-configs/testnet.yml)" >> .env
-          echo "DASHPAY_OWNER_PRIVATE_KEY=$(yq .dashpay_hd_private_key dash-network-configs/testnet.yml)" >> .env
-          echo "FEATURE_FLAGS_OWNER_PRIVATE_KEY=$(yq .feature_flags_hd_private_key dash-network-configs/testnet.yml)" >> .env
+          echo "DPNS_OWNER_PRIVATE_KEY=$(yq .dpns_hd_private_key testnet.yml)" >> .env
+          echo "DASHPAY_OWNER_PRIVATE_KEY=$(yq .dashpay_hd_private_key testnet.yml)" >> .env
+          echo "FEATURE_FLAGS_OWNER_PRIVATE_KEY=$(yq .feature_flags_hd_private_key testnet.yml)" >> .env
           echo -n "DAPI_SEED=" >> .env
-          awk -F "[= ]" "/^masternode/ {print $5}" dash-network-configs/testnet.inventory | awk NF | shuf -n1 >> .env
+          awk -F "[= ]" "/^masternode/ {print $5}" testnet.inventory | awk NF | shuf -n1 >> .env
 
       - name: Run platform test suite
         run: |
+          cat $(pwd)/.env && \
           docker run \
           -v $(pwd)/.env:/platform/packages/platform-test-suite/.env \
           strophy/platform-test-suite:latest \
           yarn run test:suite
+
+      - name: Setup tmate session
+        if: ${{ failure() }}
+        uses: mxschmitt/action-tmate@v3
