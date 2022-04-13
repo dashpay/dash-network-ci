@@ -47,7 +47,7 @@ jobs:
         run: |
           echo "NETWORK=testnet" > .env
           echo "FAUCET_PRIVATE_KEY=$(yq .faucet_privkey testnet.yml)" >> .env
-          echo "SKIP_SYNC_BEFORE_HEIGHT=$(curl -s https://testnet-insight.dashevo.org/insight-api/sync) | jq '.height - 200'" >> .env
+          echo "SKIP_SYNC_BEFORE_HEIGHT=$(curl -s https://testnet-insight.dashevo.org/insight-api/sync | jq '.height - 200')" >> .env
           echo "DPNS_OWNER_PRIVATE_KEY=$(yq .dpns_hd_private_key testnet.yml)" >> .env
           echo "DASHPAY_OWNER_PRIVATE_KEY=$(yq .dashpay_hd_private_key testnet.yml)" >> .env
           echo "FEATURE_FLAGS_OWNER_PRIVATE_KEY=$(yq .feature_flags_hd_private_key testnet.yml)" >> .env
