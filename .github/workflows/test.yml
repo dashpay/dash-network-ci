@@ -55,12 +55,7 @@ jobs:
 
       - name: Run platform test suite
         run: |
-          cat $(pwd)/.env && \
           docker run \
           -v $(pwd)/.env:/platform/packages/platform-test-suite/.env \
           strophy/platform-test-suite:latest \
           yarn run test:suite
-
-      - name: Setup tmate session
-        if: ${{ failure() }}
-        uses: mxschmitt/action-tmate@v3
