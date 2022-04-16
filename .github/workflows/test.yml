@@ -59,3 +59,12 @@ jobs:
           -v $(pwd)/.env:/platform/packages/platform-test-suite/.env \
           strophy/platform-test-suite:latest \
           yarn run test:suite
+
+      - name: Report Status
+        if: always()
+        uses: ravsamhq/notify-slack-action@master
+        with:
+          status: ${{ job.status }}
+          notify_when: 'failure'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
