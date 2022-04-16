@@ -2,30 +2,11 @@ name: Run testnet tests
 
 on:
   workflow_dispatch:
-  # schedule:
-  #   - cron:  '33 */3 * * *'
+  schedule:
+    - cron:  '33 */3 * * *'
 
 # todo: matrix run against testnet + devnets based on networks specified in config repo
 jobs:
-  smoke-tests:
-    name: Run smoke tests
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Clone network configs
-        uses: actions/checkout@v3
-        with:
-          repository: dashevo/dash-network-configs
-          token: ${{ secrets.GH_PAT }}
-
-      - name: Download network deploy tool wrapper
-        run: |
-          mkdir -p ~/.local/bin
-          curl -fsSL -o ~/.local/bin/dash-network https://raw.github.com/dashevo/dash-network-deploy/master/bin/dash-network
-          chmod +x ~/.local/bin/dash-network
-
-      - name: Run smoke tests
-        run: ~/.local/bin/dash-network test testnet
-
   test-suite:
     name: Run test suite
     runs-on: ubuntu-20.04
@@ -68,3 +49,22 @@ jobs:
           notify_when: 'failure'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # smoke-tests:
+  #   name: Run smoke tests
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #     - name: Clone network configs
+  #       uses: actions/checkout@v3
+  #       with:
+  #         repository: dashevo/dash-network-configs
+  #         token: ${{ secrets.GH_PAT }}
+
+  #     - name: Download network deploy tool wrapper
+  #       run: |
+  #         mkdir -p ~/.local/bin
+  #         curl -fsSL -o ~/.local/bin/dash-network https://raw.github.com/dashevo/dash-network-deploy/master/bin/dash-network
+  #         chmod +x ~/.local/bin/dash-network
+
+  #     - name: Run smoke tests
+  #       run: ~/.local/bin/dash-network test testnet
