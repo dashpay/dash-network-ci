@@ -38,7 +38,7 @@ jobs:
         run: |
           docker run \
           -v $(pwd)/.env:/platform/packages/platform-test-suite/.env \
-          strophy/platform-test-suite:latest \
+          dashpay/platform-test-suite:latest \
           yarn run test:suite
 
       - name: Report Status
