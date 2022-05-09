@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+set -e
+
+NETWORK=$1
+DAPI_SEED=$(awk -F '[= ]' '/^masternode/ {print $5}' "$NETWORK".inventory | awk NF | shuf -n1)
+
+
+FAUCET_PRIVATE_KEY=$(yq .faucet_privkey "$NETWORK".yml)
+DPNS_OWNER_PRIVATE_KEY=$(yq .dpns_hd_private_key "$NETWORK".yml)
+DASHPAY_OWNER_PRIVATE_KEY=$(yq .dashpay_hd_private_key "$NETWORK".yml)
+FEATURE_FLAGS_OWNER_PRIVATE_KEY=$(yq .feature_flags_hd_private_key "$NETWORK".yml)
+MASTERNODE_REWARD_SHARES_OWNER_PRIVATE_KEY=$(yq .mn_reward_shares_hd_private_key "$NETWORK".yml)
+MASTERNODE_REWARD_SHARES_OWNER_PRO_REG_TX_HASH=$()
+MASTERNODE_REWARD_SHARES_MN_OWNER_PRIVATE_KEY=$()
+
+if [[ "$NETWORK" == "devnet"* ]]; then
+  NETWORK_TYPE=devnet
+  INSIGHT_URL="http://insight.${NETWORK#devnet-}.networks.dash.org:3001/insight-api/sync"
+else
+  NETWORK_TYPE=testnet
+  INSIGHT_URL="https://testnet-insight.dashevo.org/insight-api/sync"
+fi
+echo "NETWORK="$NETWORK"_TYPE" >> .env
+echo "SKIP_SYNC_BEFORE_HEIGHT=$(curl -s $INSIGHT_URL | jq '.height - 200')" >> .env
+
+
+
+# check variables are not empty
+if [ -z "$FAUCET_ADDRESS" ] || \
+    [ -z "$FAUCET_PRIVATE_KEY" ] || \
+    [ -z "$DPNS_OWNER_PRIVATE_KEY" ] || \
+    [ -z "$FEATURE_FLAGS_OWNER_PRIVATE_KEY" ] || \
+    [ -z "$DASHPAY_OWNER_PRIVATE_KEY" ] || \
+    [ -z "$MASTERNODE_REWARD_SHARES_OWNER_PRO_REG_TX_HASH" ] || \
+    [ -z "$MASTERNODE_REWARD_SHARES_OWNER_PRIVATE_KEY" ] || \
+    [ -z "$MASTERNODE_REWARD_SHARES_MN_OWNER_PRIVATE_KEY" ]
+then
+  echo "Internal error. Some of the env variables are empty. Please check logs above."
+  exit 1
+fi
+
+echo "DAPI_SEED=${DAPI_SEED}
+FAUCET_ADDRESS=${FAUCET_ADDRESS}
+FAUCET_PRIVATE_KEY=${FAUCET_PRIVATE_KEY}
+FAUCET_WALLET_USE_STORAGE=${FAUCET_WALLET_USE_STORAGE}
+DPNS_OWNER_PRIVATE_KEY=${DPNS_OWNER_PRIVATE_KEY}
+FEATURE_FLAGS_OWNER_PRIVATE_KEY=${FEATURE_FLAGS_OWNER_PRIVATE_KEY}
+DASHPAY_OWNER_PRIVATE_KEY=${DASHPAY_OWNER_PRIVATE_KEY}
+MASTERNODE_REWARD_SHARES_OWNER_PRO_REG_TX_HASH=${MASTERNODE_REWARD_SHARES_OWNER_PRO_REG_TX_HASH}
+MASTERNODE_REWARD_SHARES_OWNER_PRIVATE_KEY=${MASTERNODE_REWARD_SHARES_OWNER_PRIVATE_KEY}
+MASTERNODE_REWARD_SHARES_MN_OWNER_PRIVATE_KEY=${MASTERNODE_REWARD_SHARES_MN_OWNER_PRIVATE_KEY}
+NETWORK=regtest" >> ${TEST_SUITE_ENV_FILE_PATH}
