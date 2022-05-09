@@ -13,6 +13,10 @@ jobs:
       fail-fast: false
       matrix:
         network: ['testnet', 'devnet-malort']
+        include:
+          - version: latest-dev
+          - network: testnet
+            version: latest
     steps:
       - name: Clone network configs
         uses: actions/checkout@v3
@@ -49,7 +53,7 @@ jobs:
         run: |
           docker run \
           -v $(pwd)/.env:/platform/packages/platform-test-suite/.env \
-          dashpay/platform-test-suite:latest \
+          dashpay/platform-test-suite:${{ matrix.version }} \
           yarn run test:suite
 
       - name: Report Status
