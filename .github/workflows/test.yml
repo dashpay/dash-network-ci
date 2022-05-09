@@ -3,7 +3,7 @@ name: Run testnet tests
 on:
   workflow_dispatch:
   schedule:
-    - cron:  '33 */3 * * *'
+    - cron: '33 */3 * * *'
 
 jobs:
   test-suite:
