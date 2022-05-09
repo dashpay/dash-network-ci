@@ -1,4 +1,4 @@
-name: Run testnet tests
+name: Run network tests
 
 on:
   workflow_dispatch:
