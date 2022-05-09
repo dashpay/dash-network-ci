@@ -18,6 +18,9 @@ jobs:
           - network: testnet
             version: latest
     steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+
       - name: Clone network configs
         uses: actions/checkout@v3
         with:
