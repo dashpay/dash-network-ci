@@ -5,11 +5,13 @@ on:
   schedule:
     - cron:  '33 */3 * * *'
 
-# todo: matrix run against testnet + devnets based on networks specified in config repo
 jobs:
   test-suite:
     name: Run test suite
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        network: ['testnet', 'devnet-malort']
     steps:
       - name: Clone network configs
         uses: actions/checkout@v3
@@ -26,13 +28,19 @@ jobs:
 
       - name: Configure network variables
         run: |
-          echo "NETWORK=testnet" > .env
-          echo "FAUCET_PRIVATE_KEY=$(yq .faucet_privkey testnet.yml)" >> .env
-          echo "SKIP_SYNC_BEFORE_HEIGHT=$(curl -s https://testnet-insight.dashevo.org/insight-api/sync | jq '.height - 200')" >> .env
-          echo "DPNS_OWNER_PRIVATE_KEY=$(yq .dpns_hd_private_key testnet.yml)" >> .env
-          echo "DASHPAY_OWNER_PRIVATE_KEY=$(yq .dashpay_hd_private_key testnet.yml)" >> .env
-          echo "FEATURE_FLAGS_OWNER_PRIVATE_KEY=$(yq .feature_flags_hd_private_key testnet.yml)" >> .env
-          echo "DAPI_SEED=$(awk -F '[= ]' '/^masternode/ {print $5}' testnet.inventory | awk NF | shuf -n1)" >> .env
+          echo "NETWORK=${{ matrix.network }}" > .env
+          echo "FAUCET_PRIVATE_KEY=$(yq .faucet_privkey ${{ matrix.network }}.yml)" >> .env
+          echo "DPNS_OWNER_PRIVATE_KEY=$(yq .dpns_hd_private_key ${{ matrix.network }}.yml)" >> .env
+          echo "DASHPAY_OWNER_PRIVATE_KEY=$(yq .dashpay_hd_private_key ${{ matrix.network }}.yml)" >> .env
+          echo "FEATURE_FLAGS_OWNER_PRIVATE_KEY=$(yq .feature_flags_hd_private_key ${{ matrix.network }}.yml)" >> .env
+          echo "DAPI_SEED=$(awk -F '[= ]' '/^masternode/ {print $5}' ${{ matrix.network }}.inventory | awk NF | shuf -n1)" >> .env
+          if [[ "${{ matrix.network }}" == "devnet"* ]]; then
+            NETWORK=${{ matrix.network }}
+            INSIGHT_URL="http://insight.${NETWORK#devnet-}.networks.dash.org:3001/insight-api/sync"
+          else
+            INSIGHT_URL="https://testnet-insight.dashevo.org/insight-api/sync"
+          fi
+          echo "SKIP_SYNC_BEFORE_HEIGHT=$(curl -s $INSIGHT_URL | jq '.height - 200')" >> .env
 
       - name: Run platform test suite
         run: |
@@ -53,6 +61,9 @@ jobs:
   # smoke-tests:
   #   name: Run smoke tests
   #   runs-on: ubuntu-20.04
+  #   strategy:
+  #     matrix:
+  #       network: ['testnet', 'devnet-malort']
   #   steps:
   #     - name: Clone network configs
   #       uses: actions/checkout@v3
