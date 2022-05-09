@@ -20,10 +20,13 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v3
+        with:
+          path: ${{ github.workspace }}
 
       - name: Clone network configs
         uses: actions/checkout@v3
         with:
+          path: ${{ github.workspace }}/dash-network-configs
           repository: dashevo/dash-network-configs
           token: ${{ secrets.GH_PAT }}
 
