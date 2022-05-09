@@ -32,7 +32,6 @@ jobs:
           echo "~/.local/bin" >> $GITHUB_PATH
 
       - name: Configure network variables
-        working-directory: dash-network-configs
         run: |
           ls -lha
           ../scripts/configure_test_suite.sh ${{ matrix.network }}
