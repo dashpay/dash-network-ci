@@ -38,10 +38,7 @@ jobs:
           echo "~/.local/bin" >> $GITHUB_PATH
 
       - name: Configure network variables
-        run: |
-          pwd
-          ls -lha
-          scripts/configure_test_suite.sh ${{ matrix.network }}
+        run: scripts/configure_test_suite.sh ${{ matrix.network }}
 
       - name: Run platform test suite
         run: |

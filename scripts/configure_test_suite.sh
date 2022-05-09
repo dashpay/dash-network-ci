@@ -1,10 +1,18 @@
 #!/usr/bin/env bash
 
-set -e
+set -ex
 
 NETWORK=$1
-DAPI_SEED=$(awk -F '[= ]' '/^masternode/ {print $5}' "$NETWORK".inventory | awk NF | shuf -n1)
 
+PATH_TO_SCRIPT=$(realpath "$0")
+PATH_TO_SCRIPTS_DIRECTORY=$(dirname "$PATH_TO_SCRIPT")
+PATH_TO_PROJECT_ROOT=$(dirname "$PATH_TO_SCRIPTS_DIRECTORY")
+PATH_TO_CONFIGS="${PATH_TO_PROJECT_ROOT}/dash-network-configs"
+INVENTORY=${PATH_TO_CONFIGS}/${NETWORK}.inventory
+CONFIG=${PATH_TO_CONFIGS}/${NETWORK}.yml
+
+DAPI_SEED=$(awk -F '[= ]' '/^masternode/ {print $5}' "$INVENTORY" | awk NF | shuf -n1)
+echo "$DAPI_SEED"
 
 FAUCET_PRIVATE_KEY=$(yq .faucet_privkey "$NETWORK".yml)
 DPNS_OWNER_PRIVATE_KEY=$(yq .dpns_hd_private_key "$NETWORK".yml)
