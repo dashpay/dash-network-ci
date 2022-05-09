@@ -28,18 +28,20 @@ jobs:
 
       - name: Configure network variables
         run: |
-          echo "NETWORK=${{ matrix.network }}" > .env
           echo "FAUCET_PRIVATE_KEY=$(yq .faucet_privkey ${{ matrix.network }}.yml)" >> .env
           echo "DPNS_OWNER_PRIVATE_KEY=$(yq .dpns_hd_private_key ${{ matrix.network }}.yml)" >> .env
           echo "DASHPAY_OWNER_PRIVATE_KEY=$(yq .dashpay_hd_private_key ${{ matrix.network }}.yml)" >> .env
           echo "FEATURE_FLAGS_OWNER_PRIVATE_KEY=$(yq .feature_flags_hd_private_key ${{ matrix.network }}.yml)" >> .env
           echo "DAPI_SEED=$(awk -F '[= ]' '/^masternode/ {print $5}' ${{ matrix.network }}.inventory | awk NF | shuf -n1)" >> .env
           if [[ "${{ matrix.network }}" == "devnet"* ]]; then
-            NETWORK=${{ matrix.network }}
-            INSIGHT_URL="http://insight.${NETWORK#devnet-}.networks.dash.org:3001/insight-api/sync"
+            NETWORK_TYPE=devnet
+            DEVNET_NAME=${{ matrix.network }}
+            INSIGHT_URL="http://insight.${DEVNET_NAME#devnet-}.networks.dash.org:3001/insight-api/sync"
           else
+            NETWORK_TYPE=testnet
             INSIGHT_URL="https://testnet-insight.dashevo.org/insight-api/sync"
           fi
+          echo "NETWORK=$NETWORK_TYPE" > .env
           echo "SKIP_SYNC_BEFORE_HEIGHT=$(curl -s $INSIGHT_URL | jq '.height - 200')" >> .env
 
       - name: Run platform test suite
