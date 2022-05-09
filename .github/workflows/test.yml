@@ -10,6 +10,7 @@ jobs:
     name: Run test suite
     runs-on: ubuntu-20.04
     strategy:
+      fail-fast: false
       matrix:
         network: ['testnet', 'devnet-malort']
     steps:
@@ -64,6 +65,7 @@ jobs:
   #   name: Run smoke tests
   #   runs-on: ubuntu-20.04
   #   strategy:
+  #     fail-fast: false
   #     matrix:
   #       network: ['testnet', 'devnet-malort']
   #   steps:
