@@ -32,7 +32,7 @@ else
   NETWORK=testnet
   INSIGHT_URL="https://testnet-insight.dashevo.org/insight-api/sync"
 fi
-SKIP_SYNC_BEFORE_HEIGHT=$(curl -s $INSIGHT_URL | jq '.height - 200') >> .env
+SKIP_SYNC_BEFORE_HEIGHT=$(curl -s $INSIGHT_URL | jq '.height - 200')
 
 # check variables are not empty
 if [ -z "$FAUCET_ADDRESS" ] || \
