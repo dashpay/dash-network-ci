@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -ex
+set -e
 
 NETWORK_STRING=$1
 
@@ -16,43 +16,39 @@ DAPI_SEED=$(awk -F '[= ]' '/^masternode/ {print $5}' "$INVENTORY" | awk NF | shu
 FAUCET_ADDRESS=$(yq .faucet_address "$CONFIG")
 FAUCET_PRIVATE_KEY=$(yq .faucet_privkey "$CONFIG")
 DPNS_OWNER_PRIVATE_KEY=$(yq .dpns_hd_private_key "$CONFIG")
-FEATURE_FLAGS_OWNER_PRIVATE_KEY=$(yq .feature_flags_hd_private_key "$CONFIG")
 DASHPAY_OWNER_PRIVATE_KEY=$(yq .dashpay_hd_private_key "$CONFIG")
+FEATURE_FLAGS_OWNER_PRIVATE_KEY=$(yq .feature_flags_hd_private_key "$CONFIG")
 
 MASTERNODE_NAME=$(grep "$DAPI_SEED" "$INVENTORY" | awk '{print $1;}')
 
-
-
-MASTERNODE_REWARD_SHARES_OWNER_PRO_REG_TX_HASH=$()
+MASTERNODE_REWARD_SHARES_OWNER_PRO_REG_TX_HASH=$(grep "$DAPI_SEED" "$INVENTORY" | awk -F "=" '{print $6;}')
 MASTERNODE_REWARD_SHARES_OWNER_PRIVATE_KEY=$(yq .mn_reward_shares_hd_private_key "$CONFIG")
 MASTERNODE_REWARD_SHARES_MN_OWNER_PRIVATE_KEY=$(yq .masternodes."$MASTERNODE_NAME".owner.private_key "$CONFIG")
 
-if [[ "$NETWORK_NAME" == "devnet"* ]]; then
+if [[ "$NETWORK_STRING" == "devnet"* ]]; then
   NETWORK=devnet
-  INSIGHT_URL="http://insight.${NETWORK#devnet-}.networks.dash.org:3001/insight-api/sync"
+  INSIGHT_URL="http://insight.${NETWORK_STRING#devnet-}.networks.dash.org:3001/insight-api/sync"
 else
   NETWORK=testnet
   INSIGHT_URL="https://testnet-insight.dashevo.org/insight-api/sync"
 fi
 SKIP_SYNC_BEFORE_HEIGHT=$(curl -s $INSIGHT_URL | jq '.height - 200') >> .env
 
-
-
-# # check variables are not empty
-# if [ -z "$FAUCET_ADDRESS" ] || \
-#     [ -z "$FAUCET_PRIVATE_KEY" ] || \
-#     [ -z "$DPNS_OWNER_PRIVATE_KEY" ] || \
-#     [ -z "$FEATURE_FLAGS_OWNER_PRIVATE_KEY" ] || \
-#     [ -z "$DASHPAY_OWNER_PRIVATE_KEY" ] || \
-#     [ -z "$MASTERNODE_REWARD_SHARES_OWNER_PRO_REG_TX_HASH" ] || \
-#     [ -z "$MASTERNODE_REWARD_SHARES_OWNER_PRIVATE_KEY" ] || \
-#     [ -z "$MASTERNODE_REWARD_SHARES_MN_OWNER_PRIVATE_KEY" ] || \
-#     [ -z "$NETWORK" ] || \
-#     [ -z "$SKIP_SYNC_BEFORE_HEIGHT" ]
-# then
-#   echo "Internal error. Some of the env variables are empty. Please check logs above."
-#   exit 1
-# fi
+# check variables are not empty
+if [ -z "$FAUCET_ADDRESS" ] || \
+    [ -z "$FAUCET_PRIVATE_KEY" ] || \
+    [ -z "$DPNS_OWNER_PRIVATE_KEY" ] || \
+    [ -z "$FEATURE_FLAGS_OWNER_PRIVATE_KEY" ] || \
+    [ -z "$DASHPAY_OWNER_PRIVATE_KEY" ] || \
+    [ -z "$MASTERNODE_REWARD_SHARES_OWNER_PRO_REG_TX_HASH" ] || \
+    [ -z "$MASTERNODE_REWARD_SHARES_OWNER_PRIVATE_KEY" ] || \
+    [ -z "$MASTERNODE_REWARD_SHARES_MN_OWNER_PRIVATE_KEY" ] || \
+    [ -z "$NETWORK" ] || \
+    [ -z "$SKIP_SYNC_BEFORE_HEIGHT" ]
+then
+  echo "Internal error. Some of the env variables are empty. Please check logs above."
+  exit 1
+fi
 
 echo "DAPI_SEED=${DAPI_SEED}
 FAUCET_ADDRESS=${FAUCET_ADDRESS}
@@ -64,4 +60,4 @@ MASTERNODE_REWARD_SHARES_OWNER_PRO_REG_TX_HASH=${MASTERNODE_REWARD_SHARES_OWNER_
 MASTERNODE_REWARD_SHARES_OWNER_PRIVATE_KEY=${MASTERNODE_REWARD_SHARES_OWNER_PRIVATE_KEY}
 MASTERNODE_REWARD_SHARES_MN_OWNER_PRIVATE_KEY=${MASTERNODE_REWARD_SHARES_MN_OWNER_PRIVATE_KEY}
 NETWORK=${NETWORK}
-SKIP_SYNC_BEFORE_HEIGHT=${SKIP_SYNC_BEFORE_HEIGHT}" >> "${PATH_TO_PROJECT_ROOT}/.env"
+SKIP_SYNC_BEFORE_HEIGHT=${SKIP_SYNC_BEFORE_HEIGHT}" > "${PATH_TO_PROJECT_ROOT}/.env"
