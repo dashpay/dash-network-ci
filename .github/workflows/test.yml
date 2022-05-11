@@ -28,6 +28,7 @@ jobs:
         with:
           path: ${{ github.workspace }}/dash-network-configs
           repository: dashevo/dash-network-configs
+          ref: add-protx-inventory
           token: ${{ secrets.GH_PAT }}
 
       - name: Install yq
