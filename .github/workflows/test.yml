@@ -1,44 +1,50 @@
-name: Run testnet tests
+name: Run network tests
 
 on:
   workflow_dispatch:
   schedule:
-    - cron:  '33 */3 * * *'
+    - cron: '33 */3 * * *'
 
-# todo: matrix run against testnet + devnets based on networks specified in config repo
 jobs:
   test-suite:
     name: Run test suite
     runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        network: ['testnet', 'devnet-valhalla']
+        include:
+          - version: latest-dev
+          - network: testnet
+            version: latest
     steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+        with:
+          path: ${{ github.workspace }}
+
       - name: Clone network configs
         uses: actions/checkout@v3
         with:
+          path: ${{ github.workspace }}/dash-network-configs
           repository: dashevo/dash-network-configs
           token: ${{ secrets.GH_PAT }}
 
       - name: Install yq
         run: |
           mkdir -p ~/.local/bin
-          wget https://github.com/mikefarah/yq/releases/download/v4.24.3/yq_linux_amd64 -O ~/.local/bin/yq
+          wget https://github.com/mikefarah/yq/releases/download/v4.25.1/yq_linux_amd64 -O ~/.local/bin/yq
           chmod +x ~/.local/bin/yq
           echo "~/.local/bin" >> $GITHUB_PATH
 
       - name: Configure network variables
-        run: |
-          echo "NETWORK=testnet" > .env
-          echo "FAUCET_PRIVATE_KEY=$(yq .faucet_privkey testnet.yml)" >> .env
-          echo "SKIP_SYNC_BEFORE_HEIGHT=$(curl -s https://testnet-insight.dashevo.org/insight-api/sync | jq '.height - 200')" >> .env
-          echo "DPNS_OWNER_PRIVATE_KEY=$(yq .dpns_hd_private_key testnet.yml)" >> .env
-          echo "DASHPAY_OWNER_PRIVATE_KEY=$(yq .dashpay_hd_private_key testnet.yml)" >> .env
-          echo "FEATURE_FLAGS_OWNER_PRIVATE_KEY=$(yq .feature_flags_hd_private_key testnet.yml)" >> .env
-          echo "DAPI_SEED=$(awk -F '[= ]' '/^masternode/ {print $5}' testnet.inventory | awk NF | shuf -n1)" >> .env
+        run: scripts/configure_test_suite.sh ${{ matrix.network }}
 
       - name: Run platform test suite
         run: |
           docker run \
           -v $(pwd)/.env:/platform/packages/platform-test-suite/.env \
-          dashpay/platform-test-suite:latest \
+          dashpay/platform-test-suite:${{ matrix.version }} \
           yarn run test:suite
 
       - name: Report Status
@@ -50,9 +56,15 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
+  # todo: enable smoke tests when timeout issue is resolved on testnet
+  #
   # smoke-tests:
   #   name: Run smoke tests
   #   runs-on: ubuntu-20.04
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       network: ['testnet', 'devnet-valhalla']
   #   steps:
   #     - name: Clone network configs
   #       uses: actions/checkout@v3
