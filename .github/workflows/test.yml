@@ -56,13 +56,15 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
+  # todo: enable smoke tests when timeout issue is resolved on testnet
+  #
   # smoke-tests:
   #   name: Run smoke tests
   #   runs-on: ubuntu-20.04
   #   strategy:
   #     fail-fast: false
   #     matrix:
-  #       network: ['testnet', 'devnet-malort']
+  #       network: ['testnet', 'devnet-valhalla']
   #   steps:
   #     - name: Clone network configs
   #       uses: actions/checkout@v3
