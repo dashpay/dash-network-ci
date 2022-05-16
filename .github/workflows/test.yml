@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        network: ['testnet', 'devnet-valhalla']
+        network: ['testnet', 'devnet-mekhong']
         include:
           - version: latest-dev
           - network: testnet
