@@ -1,4 +1,4 @@
-name: Run network tests
+name: Run mekhong tests
 
 on:
   workflow_dispatch:
