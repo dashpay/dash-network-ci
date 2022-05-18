@@ -9,14 +9,6 @@ jobs:
   test-suite:
     name: Run test suite
     runs-on: ubuntu-20.04
-    strategy:
-      fail-fast: false
-      matrix:
-        network: ['testnet', 'devnet-mekhong']
-        include:
-          - version: latest-dev
-          - network: testnet
-            version: latest
     steps:
       - name: Check out repo
         uses: actions/checkout@v3
@@ -38,13 +30,13 @@ jobs:
           echo "~/.local/bin" >> $GITHUB_PATH
 
       - name: Configure network variables
-        run: scripts/configure_test_suite.sh ${{ matrix.network }}
+        run: scripts/configure_test_suite.sh testnet
 
       - name: Run platform test suite
         run: |
           docker run \
           -v $(pwd)/.env:/platform/packages/platform-test-suite/.env \
-          dashpay/platform-test-suite:${{ matrix.version }} \
+          dashpay/platform-test-suite:latest \
           yarn run test:suite
 
       - name: Report Status
