@@ -13,6 +13,8 @@ CONFIG=${PATH_TO_CONFIGS}/${NETWORK_STRING}.yml
 
 DAPI_SEED=$(awk -F '[= ]' '/^masternode/ {print $5}' "$INVENTORY" | awk NF | shuf -n1)
 
+echo "Running against node ${DAPI_SEED}"
+
 FAUCET_ADDRESS=$(yq .faucet_address "$CONFIG")
 FAUCET_PRIVATE_KEY=$(yq .faucet_privkey "$CONFIG")
 DPNS_OWNER_PRIVATE_KEY=$(yq .dpns_hd_private_key "$CONFIG")
