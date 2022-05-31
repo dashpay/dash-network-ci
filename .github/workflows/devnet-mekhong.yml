@@ -1,4 +1,4 @@
-name: Run mekhong tests
+name: Run malort tests
 
 on:
   workflow_dispatch:
@@ -30,7 +30,7 @@ jobs:
           echo "~/.local/bin" >> $GITHUB_PATH
 
       - name: Configure network variables
-        run: scripts/configure_test_suite.sh devnet-mekhong
+        run: scripts/configure_test_suite.sh devnet-malort
 
       - name: Run platform test suite
         run: |
