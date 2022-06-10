@@ -30,7 +30,7 @@ jobs:
           echo "~/.local/bin" >> $GITHUB_PATH
 
       - name: Configure network variables
-        run: scripts/configure_test_suite.sh devnet-malort
+        run: scripts/configure_test_suite.sh devnet-333
 
       - name: Run platform test suite
         run: |
