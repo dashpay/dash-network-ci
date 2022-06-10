@@ -1,4 +1,4 @@
-name: Run malort tests
+name: Run 333 tests
 
 on:
   workflow_dispatch:
