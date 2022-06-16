@@ -64,7 +64,7 @@ jobs:
       - name: Download network deploy tool wrapper
         run: |
           mkdir -p ~/.local/bin
-          curl -fsSL -o ~/.local/bin/dash-network https://raw.github.com/dashevo/dash-network-deploy/master/bin/dash-network
+          curl -fsSL -o ~/.local/bin/dash-network https://raw.github.com/strophy/dash-network-deploy/fix/smoke-test-timeout/bin/dash-network
           chmod +x ~/.local/bin/dash-network
 
       - name: Run smoke tests
