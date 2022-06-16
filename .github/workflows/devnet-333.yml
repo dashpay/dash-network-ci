@@ -5,6 +5,9 @@ on:
   schedule:
     - cron: '33 */3 * * *'
 
+env:
+  NETWORK: devnet-333
+
 jobs:
   test-suite:
     name: Run test suite
@@ -30,7 +33,7 @@ jobs:
           echo "~/.local/bin" >> $GITHUB_PATH
 
       - name: Configure network variables
-        run: scripts/configure_test_suite.sh devnet-333
+        run: scripts/configure_test_suite.sh ${{ env.NETWORK }}
 
       - name: Run platform test suite
         run: |
@@ -51,10 +54,6 @@ jobs:
   smoke-tests:
     name: Run smoke tests
     runs-on: ubuntu-20.04
-    strategy:
-      fail-fast: false
-      matrix:
-        network: ['testnet', 'devnet-valhalla']
     steps:
       - name: Clone network configs
         uses: actions/checkout@v3
@@ -69,4 +68,4 @@ jobs:
           chmod +x ~/.local/bin/dash-network
 
       - name: Run smoke tests
-        run: ~/.local/bin/dash-network test testnet
+        run: ~/.local/bin/dash-network test ${{ env.NETWORK }}
