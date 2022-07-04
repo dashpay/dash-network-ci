@@ -38,9 +38,8 @@ jobs:
       - name: Run platform test suite
         run: |
           docker run \
-          -v $(pwd)/.env:/platform/packages/platform-test-suite/.env \
-          dashpay/platform-test-suite:latest \
-          yarn run test:suite
+          --env-file $(pwd)/.env -v $(pwd)/.env:/platform/packages/platform-test-suite/.env \
+          dashpay/platform-test-suite:latest --network=${{ env.NETWORK }}
 
       # - name: Report Status
       #   if: always()
