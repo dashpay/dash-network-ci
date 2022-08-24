@@ -7,6 +7,7 @@ on:
 
 env:
   NETWORK: devnet-jack-daniels
+  DEPLOY_TOOL_VERSION: 0.23-dev
 
 jobs:
   test-suite:
@@ -39,7 +40,7 @@ jobs:
         run: |
           docker run \
           -v $(pwd)/.env:/platform/packages/platform-test-suite/.env \
-          dashpay/platform-test-suite:latest \
+          dashpay/platform-test-suite:${DEPLOY_TOOL_VERSION} \
           yarn run test:suite
 
       - name: Report Status
@@ -64,7 +65,7 @@ jobs:
       - name: Download network deploy tool wrapper
         run: |
           mkdir -p ~/.local/bin
-          curl -fsSL -o ~/.local/bin/dash-network https://raw.github.com/strophy/dash-network-deploy/fix/smoke-test-timeout/bin/dash-network
+          curl -fsSL -o ~/.local/bin/dash-network https://raw.githubusercontent.com/dashevo/dash-network-deploy/v${DEPLOY_TOOL_VERSION}/bin/dash-network
           chmod +x ~/.local/bin/dash-network
 
       - name: Run smoke tests
