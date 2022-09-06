@@ -37,6 +37,7 @@ jobs:
 
       - name: Run platform test suite
         run: |
+          ls &&
           docker run \
           --env-file ${{ github.workspace }}/.env \
           dashpay/platform-test-suite:${DEPLOY_TOOL_VERSION} \
