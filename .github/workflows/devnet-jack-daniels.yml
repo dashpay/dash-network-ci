@@ -34,7 +34,7 @@ jobs:
           echo "~/.local/bin" >> $GITHUB_PATH
 
       - name: Configure network variables
-        run: scripts/configure_test_suite.sh ${{ env.NETWORK }}
+        run: scripts/configure_test_suite-0.23.sh ${{ env.NETWORK }}
 
       - name: Run platform test suite
         run: |
