@@ -7,6 +7,7 @@ on:
 
 env:
   NETWORK: devnet-jack-daniels
+  TEST_SUITE_VERSION: 0.23
   DEPLOY_TOOL_VERSION: 0.23-dev
 
 jobs:
@@ -40,7 +41,7 @@ jobs:
         run: |
           docker run \
           --env-file ${{ github.workspace }}/.env \
-          dashpay/platform-test-suite:${DEPLOY_TOOL_VERSION} \
+          dashpay/platform-test-suite:${TEST_SUITE_VERSION} \
           yarn run test:suite
 
       # - name: Report Status
