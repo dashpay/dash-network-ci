@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -ex
+set -e
 
 NETWORK_STRING=$1
 
