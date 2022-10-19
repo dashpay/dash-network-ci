@@ -35,13 +35,13 @@ jobs:
           echo "~/.local/bin" >> $GITHUB_PATH
 
       - name: Configure network variables
-        run: scripts/configure_test_suite-0.22.sh ${{ env.NETWORK }}
+        run: scripts/configure_test_suite.sh ${{ env.NETWORK }}
 
       - name: Run platform test suite
         run: |
           docker run \
           --env-file ${{ github.workspace }}/.env \
-          dashpay/platform-test-suite:${DEPLOY_TOOL_VERSION} \
+          dashpay/platform-test-suite:${TEST_SUITE_VERSION} \
           yarn run test:suite
 
       # - name: Report Status
@@ -66,7 +66,7 @@ jobs:
       - name: Download network deploy tool wrapper
         run: |
           mkdir -p ~/.local/bin
-          curl -fsSL -o ~/.local/bin/dash-network https://raw.githubusercontent.com/dashevo/dash-network-deploy/master/bin/dash-network
+          curl -fsSL -o ~/.local/bin/dash-network https://raw.githubusercontent.com/dashevo/dash-network-deploy/v${DEPLOY_TOOL_VERSION}/bin/dash-network
           chmod +x ~/.local/bin/dash-network
 
       - name: Run smoke tests
