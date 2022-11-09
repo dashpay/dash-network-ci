@@ -32,7 +32,7 @@ if [[ "$NETWORK_STRING" == "devnet"* ]]; then
   INSIGHT_URL="http://insight.${NETWORK_STRING#devnet-}.networks.dash.org:3001/insight-api/sync"
 else
   NETWORK=testnet
-  INSIGHT_URL="https://testnet-insight.dashevo.org/insight-api/sync"
+  INSIGHT_URL="http://insight.testnet.networks.dash.org:3001/insight-api/sync"
 fi
 SKIP_SYNC_BEFORE_HEIGHT=$(curl -s $INSIGHT_URL | jq '.height - 200')
 
