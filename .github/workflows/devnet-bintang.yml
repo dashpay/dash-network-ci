@@ -1,0 +1,73 @@
+name: Run Bintang tests
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '33 */3 * * *'
+
+env:
+  NETWORK: devnet-bintang
+  TEST_SUITE_VERSION: 0.24-dev
+  DEPLOY_TOOL_VERSION: 0.24-dev
+
+jobs:
+  test-suite:
+    name: Run test suite
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+        with:
+          path: ${{ github.workspace }}
+
+      - name: Clone network configs
+        uses: actions/checkout@v3
+        with:
+          path: ${{ github.workspace }}/dash-network-configs
+          repository: dashevo/dash-network-configs
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Install yq
+        run: |
+          mkdir -p ~/.local/bin
+          wget https://github.com/mikefarah/yq/releases/download/v4.30.6/yq_linux_amd64 -O ~/.local/bin/yq
+          chmod +x ~/.local/bin/yq
+          echo "~/.local/bin" >> $GITHUB_PATH
+
+      - name: Configure network variables
+        run: scripts/configure_test_suite.sh ${{ env.NETWORK }}
+
+      - name: Run platform test suite
+        run: |
+          docker run \
+          --env-file ${{ github.workspace }}/.env \
+          dashpay/platform-test-suite:${TEST_SUITE_VERSION} \
+          yarn run test:suite
+
+      # - name: Report Status
+      #   if: always()
+      #   uses: ravsamhq/notify-slack-action@master
+      #   with:
+      #     status: ${{ job.status }}
+      #     notify_when: 'failure'
+      #   env:
+      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEVNET_WEBHOOK_URL }}
+
+  smoke-tests:
+    name: Run smoke tests
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Clone network configs
+        uses: actions/checkout@v3
+        with:
+          repository: dashevo/dash-network-configs
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Download network deploy tool wrapper
+        run: |
+          mkdir -p ~/.local/bin
+          curl -fsSL -o ~/.local/bin/dash-network https://raw.githubusercontent.com/dashevo/dash-network-deploy/v${DEPLOY_TOOL_VERSION}/bin/dash-network
+          chmod +x ~/.local/bin/dash-network
+
+      - name: Run smoke tests
+        run: ~/.local/bin/dash-network test ${{ env.NETWORK }}
