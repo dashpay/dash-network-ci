@@ -1,4 +1,4 @@
-name: Run Bintang tests
+name: Run Paulaner tests
 
 on:
   workflow_dispatch:
