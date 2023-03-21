@@ -7,8 +7,8 @@ on:
 
 env:
   NETWORK: devnet-bintang
-  TEST_SUITE_VERSION: 0.24-dev
-  DEPLOY_TOOL_VERSION: 0.24-dev
+  TEST_SUITE_VERSION: '0.24-dev'
+  DEPLOY_TOOL_VERSION: '0.24-dev'
 
 jobs:
   test-suite:
