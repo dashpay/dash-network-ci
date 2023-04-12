@@ -72,7 +72,11 @@ jobs:
       - name: Install Chrome
         uses: browser-actions/setup-chrome@v1
 
-      - run: chrome --version
+      - name: Set Chrome env var
+        run: echo "CHROME_BIN=$(which chrome)" >> $GITHUB_ENV
+
+      - name: Show Chrome version
+        run: chrome --version
 
       - name: Run smoke tests
         run: ~/.local/bin/dash-network test ${{ env.NETWORK }}
