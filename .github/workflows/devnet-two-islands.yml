@@ -80,7 +80,3 @@ jobs:
 
       - name: Run smoke tests
         run: ~/.local/bin/dash-network test ${{ env.NETWORK }}
-
-      - name: Setup tmate session
-        if: ${{ failure() }}
-        uses: mxschmitt/action-tmate@v3
