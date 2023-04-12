@@ -69,5 +69,10 @@ jobs:
           curl -fsSL -o ~/.local/bin/dash-network https://raw.githubusercontent.com/dashevo/dash-network-deploy/v${DEPLOY_TOOL_VERSION}/bin/dash-network
           chmod +x ~/.local/bin/dash-network
 
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - run: chrome --version
+
       - name: Run smoke tests
         run: ~/.local/bin/dash-network test ${{ env.NETWORK }}
