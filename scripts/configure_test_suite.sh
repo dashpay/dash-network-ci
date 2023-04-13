@@ -11,7 +11,7 @@ PATH_TO_CONFIGS="${PATH_TO_PROJECT_ROOT}/dash-network-configs"
 INVENTORY=${PATH_TO_CONFIGS}/${NETWORK_STRING}.inventory
 CONFIG=${PATH_TO_CONFIGS}/${NETWORK_STRING}.yml
 
-DAPI_SEED=$(awk -F '[= ]' '/^masternode/ {print $5}' "$INVENTORY" | awk NF | shuf -n1)
+DAPI_SEED=$(awk -F '[= ]' '/^hp-masternode/ {print $5}' "$INVENTORY" | awk NF | shuf -n1)
 
 echo "Running against node ${DAPI_SEED}"
 
