@@ -1,4 +1,4 @@
-name: Run devnet-two-islands tests
+name: Run devnet-absinthe tests
 
 on:
   workflow_dispatch:
@@ -6,9 +6,9 @@ on:
     - cron: '33 */3 * * *'
 
 env:
-  NETWORK: devnet-two-islands
-  TEST_SUITE_VERSION: '0.24-dev'
-  DEPLOY_TOOL_VERSION: '0.24-dev'
+  NETWORK: devnet-absinthe
+  TEST_SUITE_VERSION: '0.25-dev'
+  DEPLOY_TOOL_VERSION: '0.25-dev'
 
 jobs:
   test-suite:
