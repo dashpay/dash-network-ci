@@ -8,7 +8,7 @@ on:
 env:
   NETWORK: devnet-absinthe
   TEST_SUITE_VERSION: '0.25-dev'
-  DEPLOY_TOOL_VERSION: '0.25-dev'
+  DEPLOY_TOOL_VERSION: '0.24-dev'
 
 jobs:
   test-suite:
