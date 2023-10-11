@@ -7,7 +7,7 @@ on:
 
 env:
   NETWORK: testnet
-  TEST_SUITE_VERSION: '0.25.0-dev.31'
+  TEST_SUITE_VERSION: '0.25.0'
   DEPLOY_TOOL_VERSION: '0.25.0-dev.7'
 
 jobs:
