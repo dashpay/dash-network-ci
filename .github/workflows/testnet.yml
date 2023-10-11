@@ -13,7 +13,7 @@ env:
 jobs:
   test-suite:
     name: Run test suite
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Check out repo
         uses: actions/checkout@v3
@@ -59,7 +59,7 @@ jobs:
 
   smoke-tests:
     name: Run smoke tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Clone network configs
         uses: actions/checkout@v3
