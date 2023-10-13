@@ -42,7 +42,7 @@ jobs:
           docker run \
           --env-file ${{ github.workspace }}/.env \
           dashpay/platform-test-suite:${TEST_SUITE_VERSION} \
-          yarn run test:suite
+          LOG_LEVEL=debug yarn run test:suite
 
       # - name: Setup tmate session
       #   if: ${{ failure() }}
